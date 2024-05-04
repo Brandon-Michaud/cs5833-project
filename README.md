@@ -1,3 +1,15 @@
+# File Locations
+
+The HTML (actually JSX since this was created using React) is located at `src/App.js`.\
+The CSS for the website is located at `src/App.css`.\
+The smart contract and ABI are located within `src/contracts`.\
+Detailed documentation for each of these files can be found within the files themselves.
+
+# Other Notes
+The list of cards should be updated once the transaction is confirmed without needing to refresh.\
+There should also be a link for the latest transaction on etherscan after the transaction is confirmed.\
+If you switch wallets, you will need to refresh the page for the change to take effect.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
