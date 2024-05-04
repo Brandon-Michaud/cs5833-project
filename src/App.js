@@ -10,6 +10,7 @@ function App() {
   const [cards, setCards] = useState([]);
   const [newCardName, setNewCardName] = useState('');
   const [newCardPrice, setNewCardPrice] = useState('');
+  const [lastTransactionHash, setLastTransactionHash] = useState('');
 
   useEffect(() => {
     const initWeb3 = async () => {
@@ -34,9 +35,7 @@ function App() {
         setWeb3(web3);
         setAccounts(accounts);
         setContract(contractInstance);
-        if (web3) {
-          fetchCards(contractInstance, web3);
-        }
+        fetchCards(contractInstance, web3);
       } catch (error) {
         alert(
           `Failed to load web3, accounts, or contract. Check console for details.`,
@@ -49,6 +48,7 @@ function App() {
   }, []);
   
   const fetchCards = async (contractInstance, web3) => {
+    console.log("Web3 available in fetchCards:", web3);
     const cardCount = await contractInstance.methods.getCardCount().call();
     const loadedCards = [];
 
@@ -67,19 +67,36 @@ function App() {
   };
 
   const listCard = async (name, price) => {
-    await contract.methods.listCard(name, web3.utils.toWei(price, 'ether')).send({ from: accounts[0] });
-    fetchCards(contract);
+    if (!contract) {
+      console.error("Contract is not initialized.");
+      return;
+    }
+  
+    try {
+      const response = await contract.methods.listCard(name, web3.utils.toWei(price, 'ether')).send({ from: accounts[0] })
+        .then(response => {
+          setLastTransactionHash(response.transactionHash);
+          fetchCards(contract, web3); // Fetch new list of cards
+        });
+    } catch (error) {
+      console.error("Error listing card:", error);
+    }
   };
 
   const buyCard = async (id, price) => {
-    await contract.methods.buyCard(id).send({ from: accounts[0], value: web3.utils.toWei(price, 'ether') });
-    fetchCards(contract);
+    const response = await contract.methods.buyCard(id).send({ from: accounts[0], value: web3.utils.toWei(price, 'ether') })
+      .then(response => {
+        setLastTransactionHash(response.transactionHash);
+        fetchCards(contract, web3); // Fetch new list of cards
+      });
   };
 
   const handleListCard = async (event) => {
     event.preventDefault();
     await listCard(newCardName, newCardPrice);
   };
+
+  const etherscanUrl = `https://sepolia.etherscan.io/tx/${lastTransactionHash}`
 
   return (
     <div>
@@ -104,6 +121,7 @@ function App() {
           <button type="submit">List Card</button>
         </form>
       </div>
+      <h2>Last Transaction Hash: {lastTransactionHash != '' && <a href={etherscanUrl} target="_blank" rel="noopener noreferrer">{lastTransactionHash}</a>}</h2>
       <h2>Available Cards</h2>
       <div className="cards-container">
         {cards.map((card, index) => (
