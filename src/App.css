@@ -1,4 +1,4 @@
-/* App.css */
+/* Styling for Website */
 
 body {
   font-family: 'Arial', sans-serif;
@@ -26,7 +26,7 @@ input[type="text"], input[type="number"] {
 }
 
 button {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
   border: none;
   color: white;
   padding: 10px 20px;
@@ -44,33 +44,33 @@ button:hover {
 }
 
 .owned-indicator {
-  background-color: lightgray; /* Light gray background */
-  color: #007BFF; /* Blue text */
+  background-color: lightgray;
+  color: #007BFF;
   padding: 10px 20px;
   border-radius: 5px;
   text-align: center;
   display: inline-block;
   font-size: 16px;
-  border: 1px solid #dee2e6; /* Slight border for definition */
-  cursor: default; /* Regular cursor to indicate non-interactivity */
+  border: 1px solid #dee2e6;
+  cursor: default;
 }
 
 .not-for-sale-indicator {
-  background-color: lightgrey; /* Light gray background */
-  color: #dc3545; /* Red text */
+  background-color: lightgrey;
+  color: #dc3545;
   padding: 10px 20px;
   border-radius: 5px;
   text-align: center;
   display: inline-block;
   font-size: 16px;
-  border: 1px solid #dee2e6; /* Slight border for definition */
-  cursor: default; /* Regular cursor to indicate non-interactivity */
+  border: 1px solid #dee2e6;
+  cursor: default;
 }
 
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust the min-width to fit your design */
-  gap: 20px; /* Space between cards */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
   padding: 20px;
 }
 
@@ -83,24 +83,24 @@ button:hover {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   padding: 15px;
-  height: 280px; /* Adjusted for trading card aspect ratio */
+  height: 280px;
   aspect-ratio: 2 / 3;
-  overflow: hidden; /* Ensures no overflow */
+  overflow: hidden;
 }
 
 .card p {
   margin: 5px 0;
-  white-space: normal; /* Allows text wrapping */
-  overflow-wrap: break-word; /* Ensures text breaks to avoid overflow */
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .card p, .card div {
-  font-size: 0.9rem; /* Adjust font size as needed */
+  font-size: 0.9rem;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* Limits the text to two lines */
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 

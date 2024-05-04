@@ -4,37 +4,50 @@ import NBATradingCardsABI from './contracts/NBATradingCards.json';
 import './App.css';
 
 function App() {
+  // Smart contract interation
   const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [contract, setContract] = useState(null);
+
+  // List of cards in marketplace
   const [cards, setCards] = useState([]);
+
+  // List new card fields
   const [newCardName, setNewCardName] = useState('');
   const [newCardPrice, setNewCardPrice] = useState('');
+
+  // Stores last transaction hash
   const [lastTransactionHash, setLastTransactionHash] = useState('');
 
+  // Initialize website
   useEffect(() => {
     const initWeb3 = async () => {
       try {
+        // Initialize web3 and wallet
         const web3 = await getWeb3();
         const accounts = await web3.eth.getAccounts();
         const networkId = await web3.eth.net.getId();
         
         // Define contract address and check network ID
-        const contractAddress = "0xD4352F75Ed115f331f30fc571DC4e01F13007e8e"; // Replace with your contract's address
-        const expectedNetworkId = "11155111"; // Replace with the network ID you're targeting, e.g., '4' for Rinkeby
-  
+        const contractAddress = "0xD4352F75Ed115f331f30fc571DC4e01F13007e8e";
+        const expectedNetworkId = "11155111";
         if (networkId.toString() !== expectedNetworkId) {
           alert("Please connect to the right Ethereum network.");
           return;
         }
   
+        // Get contract
         const contractInstance = new web3.eth.Contract(
           NBATradingCardsABI,
           contractAddress
         );
+
+        // Step smart contract interaction states
         setWeb3(web3);
         setAccounts(accounts);
         setContract(contractInstance);
+
+        // Get all of the cards
         fetchCards(contractInstance, web3);
       } catch (error) {
         alert(
@@ -47,10 +60,13 @@ function App() {
     initWeb3();
   }, []);
   
+  // Get all of the cards from the marketplace
   const fetchCards = async (contractInstance, web3) => {
+    // Get total number of cards
     const cardCount = await contractInstance.methods.getCardCount().call();
     const loadedCards = [];
 
+    // Get each card individually
     for (let i = 0; i < cardCount; i++) {
       let card = await contractInstance.methods.getCard(i).call();
       loadedCards.push({
@@ -62,9 +78,11 @@ function App() {
       });
     }
 
+    // Update state with cards
     setCards(loadedCards);
   };
 
+  // List a new card on the marketplace
   const listCard = async (name, price) => {
     if (!contract) {
       console.error("Contract is not initialized.");
@@ -72,31 +90,43 @@ function App() {
     }
   
     try {
+      // List the card
       const response = await contract.methods.listCard(name, web3.utils.toWei(price, 'ether')).send({ from: accounts[0] })
         .then(response => {
+          // Update latest transaction and refresh cards
           setLastTransactionHash(response.transactionHash);
-          fetchCards(contract, web3); // Fetch new list of cards
+          fetchCards(contract, web3);
         });
+
+      // Clear form fields
+      setNewCardName('')
+      setNewCardPrice('')
     } catch (error) {
       console.error("Error listing card:", error);
     }
   };
 
+  // Buy a card from the marketplace
   const buyCard = async (id, price) => {
+    // Buy a card
     const response = await contract.methods.buyCard(id).send({ from: accounts[0], value: web3.utils.toWei(price, 'ether') })
       .then(response => {
+        // Update latest transaction and refresh cards
         setLastTransactionHash(response.transactionHash);
-        fetchCards(contract, web3); // Fetch new list of cards
+        fetchCards(contract, web3);
       });
   };
 
+  // Wrapper for submit button click for listing new card
   const handleListCard = async (event) => {
     event.preventDefault();
     await listCard(newCardName, newCardPrice);
   };
 
+  // URL for transaction links on etherscan
   const etherscanUrl = `https://sepolia.etherscan.io/tx/${lastTransactionHash}`
 
+  // HTML for website
   return (
     <div>
       <h1>NBA Trading Cards</h1>
