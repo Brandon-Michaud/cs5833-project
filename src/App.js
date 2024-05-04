@@ -48,7 +48,6 @@ function App() {
   }, []);
   
   const fetchCards = async (contractInstance, web3) => {
-    console.log("Web3 available in fetchCards:", web3);
     const cardCount = await contractInstance.methods.getCardCount().call();
     const loadedCards = [];
 
